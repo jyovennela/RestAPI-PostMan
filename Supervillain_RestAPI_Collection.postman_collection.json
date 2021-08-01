@@ -1,0 +1,252 @@
+{
+	"info": {
+		"_postman_id": "d0a78781-e7c9-4f8c-877f-761dc32b05e0",
+		"name": "Supervillain_RestAPI_Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ValidateGetMethod",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function(){\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify the user from the response\", function () {\r",
+							"    var cnt =0;\r",
+							"    var jsonData = pm.response.json();\r",
+							"for(cnt=0;cnt < jsonData.count -1 ;cnt++)\r",
+							"{\r",
+							"    pm.expect(jsonData[i].username.toLowerCase()).to.contains(\"test\");\r",
+							"}\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify the Score order from the response\", function () {\r",
+							"    var i =0; \r",
+							"    var jsonData = pm.response.json();\r",
+							"    if(jsonData !=null)\r",
+							"    {\r",
+							"for(i=0;i < jsonData.count -1 ;i++)\r",
+							"{\r",
+							"    pm.expect(jsonData[i].score).to.above(jsonData[i-1].score);\r",
+							"\r",
+							"}}\r",
+							"else {\r",
+							"    pm.expect(jsonData.count.to.be.above(1));\r",
+							"}\r",
+							"\r",
+							"\r",
+							"}\r",
+							"\r",
+							");\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/user",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "VerifyPOSTMethod",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function(){\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify response status & message\", function () {\r",
+							"   var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+							"    pm.expect(jsonData.message).to.eql(\"User added.\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify duplicate key value violates unique constraint username as blank\", function () {\r",
+							"     var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.error).to.contains(\"duplicate key value violates unique constraint\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"{{userName}}\",\r\n  \"score\": {{scoreParam}}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/user",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "VerifyPUTMethod",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify code, status and message if no user exists\", function(){\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.response.to.have.status(201);\r",
+							"pm.expect(jsonData.status).to.eql(\"success\");\r",
+							"pm.expect(jsonData.message).to.eql(\"User added with updated score\");\r",
+							"\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"{{UpdateuserName}}\",\r\n  \"score\": {{updateScore}}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/user",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "VerifyDeleteMethod",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function(){\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify status code if no deletekey provided\", function(){\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify the error message shown in the 401 response\", function(){\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.expect(jsonData.error).to.eql(\"unable to authenticate key\");\r",
+							"\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "Super",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "Super",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "delete-key",
+						"value": "14104",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://supervillain.herokuapp.com/v1/user",
+					"protocol": "https",
+					"host": [
+						"supervillain",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"v1",
+						"user"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
